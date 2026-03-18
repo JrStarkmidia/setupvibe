@@ -683,7 +683,7 @@ step_8() {
         brew_cmd install $TOOLS
         
         echo "Installing Bruno (API Client)..."
-        brew_cmd install --cask bruno
+        brew_cmd install --cask bruno 2>/dev/null || brew_cmd install --cask bruno --force
         
         # FZF keybindings setup
         if [ -d "$BREW_PREFIX/opt/fzf" ]; then
