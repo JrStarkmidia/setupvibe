@@ -48,7 +48,7 @@ curl -sL https://raw.githubusercontent.com/promovaweb/setupvibe/refs/heads/main/
 | 3. PHP 8.4 Ecosystem | PHP, Composer, Laravel installer |
 | 4. Ruby Ecosystem | rbenv, Ruby, Bundler, Rails |
 | 5. Languages | Go, Rust, Python + `uv` package manager |
-| 6. JavaScript | Node.js, Bun, PNPM |
+| 6. JavaScript | Node.js, Bun, PNPM, PM2 |
 | 7. DevOps | Docker, Docker Compose, Ansible, GitHub CLI |
 | 8. Modern Unix Tools | bat, eza, fd, ripgrep, fzf, zoxide, delta, and more |
 | 9. Network & Monitoring | nmap, htop, Tailscale, and others |
@@ -56,7 +56,7 @@ curl -sL https://raw.githubusercontent.com/promovaweb/setupvibe/refs/heads/main/
 | 11. Shell | ZSH, Oh My Zsh, Starship prompt (Gruvbox Rainbow) |
 | 12. Tmux & Plugins | TPM + tmux.conf with full plugin set |
 | 13. AI CLI Tools | claude-code, gemini-cli, codex, copilot-cli |
-| 14. Finalization & Cleanup | Temp files, logs, cache purge |
+| 14. Finalization & Cleanup | Temp files, logs, cache purge; PM2 auto-startup & defaults |
 
 ---
 
@@ -118,6 +118,14 @@ A shared [`tmux.conf`](tmux.conf) is downloaded and applied on both setups. For 
 | Theme | 2KAbhishek/tmux2k (onedark, with git/cwd/docker/mise/cpu/ram/network/time) |
 
 After installation, press `prefix + I` inside tmux to install all plugins.
+
+---
+
+## PM2 Process Manager
+
+PM2 is installed globally and configured for auto-startup on both macOS (launchd) and Linux (systemd). A default `~/ecosystem.config.js` template is generated during setup with sensible defaults for log timestamps, memory limits, crash recovery, and environment switching.
+
+For full documentation, configuration reference, and command guide see **[pm2.md](pm2.md)**.
 
 ---
 
