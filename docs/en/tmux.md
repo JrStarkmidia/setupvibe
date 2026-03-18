@@ -1,6 +1,6 @@
 # Tmux Guide
 
-SetupVibe installs and configures tmux with [TPM](https://github.com/tmux-plugins/tpm) and a curated plugin set. Configuration lives in [`tmux.conf`](tmux.conf) and is downloaded automatically during setup.
+SetupVibe installs and configures tmux with [TPM](https://github.com/tmux-plugins/tpm) and a curated plugin set. Configuration lives in [`tmux.conf`](../../conf/tmux.conf) and is downloaded automatically during setup.
 
 ---
 
@@ -363,7 +363,7 @@ Feature-rich status bar with widgets and multiple themes.
 
 ## Key Conflict Resolution
 
-tmux has many built-in keybinds. The table below shows every conflict found and how it is resolved in [`tmux.conf`](tmux.conf).
+tmux has many built-in keybinds. The table below shows every conflict found and how it is resolved in [`tmux.conf`](../../conf/tmux.conf).
 
 | Key | tmux default | Plugin | Resolution |
 |---|---|---|---|

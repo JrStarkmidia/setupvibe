@@ -918,7 +918,7 @@ step_11() {
         starship preset gruvbox-rainbow -o "$REAL_HOME/.config/starship.toml"
 
         # macOS ZSHRC
-        safe_download https://raw.githubusercontent.com/promovaweb/setupvibe/main/zshrc-macos.zsh "$REAL_HOME/.zshrc"
+        safe_download https://raw.githubusercontent.com/promovaweb/setupvibe/main/conf/zshrc-macos.zsh "$REAL_HOME/.zshrc"
     else
         sudo apt-get install -y zsh
 
@@ -949,7 +949,7 @@ step_11() {
 
 
         # Linux ZSHRC
-        safe_download https://raw.githubusercontent.com/promovaweb/setupvibe/main/zshrc-linux.zsh "$REAL_HOME/.zshrc"
+        safe_download https://raw.githubusercontent.com/promovaweb/setupvibe/main/conf/zshrc-linux.zsh "$REAL_HOME/.zshrc"
         sudo chown $REAL_USER:$REAL_USER "$REAL_HOME/.zshrc"
 
         if [ "$SHELL" != "/bin/zsh" ] && [ "$SHELL" != "/usr/bin/zsh" ]; then
@@ -964,7 +964,7 @@ step_12() {
     git_ensure "https://github.com/tmux-plugins/tpm" "$REAL_HOME/.tmux/plugins/tpm"
 
     echo "Downloading tmux.conf..."
-    safe_download https://raw.githubusercontent.com/promovaweb/setupvibe/main/tmux.conf "$REAL_HOME/.tmux.conf"
+    safe_download https://raw.githubusercontent.com/promovaweb/setupvibe/main/conf/tmux.conf "$REAL_HOME/.tmux.conf"
 
     # Also install to /root if running as root with a different REAL_HOME
     if [[ "$(id -u)" -eq 0 && "$REAL_HOME" != "/root" ]]; then
