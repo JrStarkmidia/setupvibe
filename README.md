@@ -62,7 +62,7 @@ curl -sL https://raw.githubusercontent.com/promovaweb/setupvibe/refs/heads/main/
 
 ## Server Setup — What Gets Installed
 
-**10 steps, Linux-only, no desktop or dev language tools.**
+**11 steps, Linux-only, no desktop or dev language tools.**
 
 | Step | What it does |
 |---|---|
@@ -73,9 +73,10 @@ curl -sL https://raw.githubusercontent.com/promovaweb/setupvibe/refs/heads/main/
 | 4. Modern Unix Tools | CLI productivity utilities via Brew |
 | 5. Network & Monitoring | nmap, htop, Tailscale |
 | 6. SSH Server | OpenSSH server configuration |
-| 7. Shell | ZSH, Oh My Zsh, Starship prompt, tmux + plugins |
-| 8. AI CLI Tools | claude-code, gemini-cli, codex, copilot-cli |
-| 9. Finalization | Cleanup and validation |
+| 7. Shell | ZSH, Oh My Zsh, Starship prompt (Gruvbox Rainbow) |
+| 8. Tmux & Plugins | TPM + tmux.conf with full plugin set |
+| 9. AI CLI Tools | claude-code, gemini-cli, codex, copilot-cli |
+| 10. Finalization | Cleanup and validation |
 
 ---
 
