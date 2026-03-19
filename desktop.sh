@@ -24,7 +24,7 @@ NC='\033[0m' # No Color
 
 
 # --- VERSION ---
-VERSION="0.33.0"
+VERSION="0.34.0"
 INSTALL_URL="https://raw.githubusercontent.com/promovaweb/setupvibe/refs/heads/main/desktop.sh"
 
 echo -e "${CYAN}SetupVibe Desktop v${VERSION}${NC}"
@@ -192,6 +192,11 @@ if $IS_LINUX; then
             DISTRO_CODENAME="$BASE_CODENAME"
         fi
     fi
+
+    IS_UBUNTU=false
+    IS_DEBIAN=false
+    [[ "$DISTRO_ID" == "ubuntu" ]] && IS_UBUNTU=true
+    [[ "$DISTRO_ID" == "debian" ]] && IS_DEBIAN=true
 else
     DISTRO_ID="macos"
     DISTRO_CODENAME=$(sw_vers -productVersion)
@@ -579,17 +584,22 @@ step_3() {
         composer global require laravel/installer
     else
         echo "Configuring PHP Repository..."
-        if [[ "$DISTRO_ID" == "ubuntu" ]]; then
+        if $IS_UBUNTU; then
+            echo "Using Ubuntu PPA Strategy..."
             sudo add-apt-repository ppa:ondrej/php -y
-        else
+        elif $IS_DEBIAN; then
+            echo "Using Debian Sury Strategy..."
             # Sury repo supports Debian stable releases; fall back to bookworm for unsupported codenames
             PHP_CODENAME="$DISTRO_CODENAME"
             case "$DISTRO_CODENAME" in
-                forky|sid|experimental) PHP_CODENAME="trixie" ;;
+                trixie|forky|sid|experimental) PHP_CODENAME="bookworm" ;;
             esac
             install_key "https://packages.sury.org/php/apt.gpg" "/etc/apt/keyrings/php.gpg"
             echo "deb [signed-by=/etc/apt/keyrings/php.gpg] https://packages.sury.org/php/ $PHP_CODENAME main" | sudo tee /etc/apt/sources.list.d/php.list
+        else
+            echo -e "${YELLOW}⚠ Unknown Linux distribution. Skipping PHP repository configuration.${NC}"
         fi
+        
         sudo apt-get update -qq
         echo "Installing PHP 8.4 & Extensions..."
         sudo apt-get install -y php8.4 php8.4-cli php8.4-common php8.4-dev \
@@ -761,26 +771,35 @@ step_7() {
         echo "Installing GitHub CLI..."
         brew_cmd install gh
     else
-        # Docker
-        # Docker does not publish packages for Debian testing/unstable — fall back to latest stable
+        # Docker Strategy
+        echo "Configuring Docker..."
         DOCKER_CODENAME="$DISTRO_CODENAME"
-        if [[ "$DISTRO_ID" == "debian" ]]; then
+        
+        if $IS_UBUNTU; then
+            echo "Using Ubuntu Docker Strategy..."
+        elif $IS_DEBIAN; then
+            echo "Using Debian Docker Strategy..."
             case "$DISTRO_CODENAME" in
                 trixie|forky|sid|experimental) DOCKER_CODENAME="bookworm" ;;
             esac
         fi
+
         install_key "https://download.docker.com/linux/$DISTRO_ID/gpg" "/etc/apt/keyrings/docker.gpg"
         echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/$DISTRO_ID $DOCKER_CODENAME stable" | sudo tee /etc/apt/sources.list.d/docker.list
+        
         sudo apt-get update -qq
         sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin docker-buildx-plugin
-        sudo usermod -aG docker $REAL_USER
+        sudo usermod -aG docker "$REAL_USER"
 
-        # Ansible
-        if [[ "$DISTRO_ID" == "ubuntu" ]]; then
+        # Ansible Strategy
+        echo "Configuring Ansible..."
+        if $IS_UBUNTU; then
+            echo "Using Ubuntu Ansible PPA Strategy..."
             sudo add-apt-repository --yes --update ppa:ansible/ansible
             sudo apt-get install -y ansible
-        else
-            # ansible package was removed from Debian 12+ official repos; ansible-core is the replacement
+        elif $IS_DEBIAN; then
+            echo "Using Debian Ansible Strategy..."
+            # Debian 12+ (Bookworm/Trixie) removes 'ansible' package; 'ansible-core' is the base.
             sudo apt-get install -y ansible-core
         fi
 

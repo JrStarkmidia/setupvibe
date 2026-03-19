@@ -25,7 +25,7 @@ NC='\033[0m' # No Color
 
 
 # --- VERSION ---
-VERSION="0.33.0"
+VERSION="0.34.0"
 INSTALL_URL="https://raw.githubusercontent.com/promovaweb/setupvibe/refs/heads/main/server.sh"
 
 echo -e "${CYAN}SetupVibe Server Edition v${VERSION}${NC}"
@@ -159,6 +159,11 @@ if [[ "$DISTRO_ID" == "zorin" || "$DISTRO_ID" == "linuxmint" ]]; then
         DISTRO_CODENAME="$BASE_CODENAME"
     fi
 fi
+
+IS_UBUNTU=false
+IS_DEBIAN=false
+[[ "$DISTRO_ID" == "ubuntu" ]] && IS_UBUNTU=true
+[[ "$DISTRO_ID" == "debian" ]] && IS_DEBIAN=true
 
 
 # --- DETECT ARCHITECTURE ---
@@ -464,28 +469,35 @@ step_2() {
 
 
 step_3() {
-    # Docker
-    echo "Installing Docker..."
-    # Docker does not publish packages for Debian testing/unstable — fall back to latest stable
+    # Docker Strategy
+    echo "Configuring Docker..."
     DOCKER_CODENAME="$DISTRO_CODENAME"
-    if [[ "$DISTRO_ID" == "debian" ]]; then
+    
+    if $IS_UBUNTU; then
+        echo "Using Ubuntu Docker Strategy..."
+    elif $IS_DEBIAN; then
+        echo "Using Debian Docker Strategy..."
         case "$DISTRO_CODENAME" in
             trixie|forky|sid|experimental) DOCKER_CODENAME="bookworm" ;;
         esac
     fi
+
     install_key "https://download.docker.com/linux/$DISTRO_ID/gpg" "/etc/apt/keyrings/docker.gpg"
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/$DISTRO_ID $DOCKER_CODENAME stable" | sudo tee /etc/apt/sources.list.d/docker.list
+    
     sudo apt-get update -qq
     sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin docker-buildx-plugin
-    sudo usermod -aG docker $REAL_USER
+    sudo usermod -aG docker "$REAL_USER"
 
-    # Ansible
-    echo "Installing Ansible..."
-    if [[ "$DISTRO_ID" == "ubuntu" ]]; then
+    # Ansible Strategy
+    echo "Configuring Ansible..."
+    if $IS_UBUNTU; then
+        echo "Using Ubuntu Ansible PPA Strategy..."
         sudo add-apt-repository --yes --update ppa:ansible/ansible
         sudo apt-get install -y ansible
-    else
-        # ansible package was removed from Debian 12+ official repos; ansible-core is the replacement
+    elif $IS_DEBIAN; then
+        echo "Using Debian Ansible Strategy..."
+        # Debian 12+ (Bookworm/Trixie) removes 'ansible' package; 'ansible-core' is the base.
         sudo apt-get install -y ansible-core
     fi
 
